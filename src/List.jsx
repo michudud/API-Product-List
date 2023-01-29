@@ -1,86 +1,118 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import Product from "./Product";
 
 const List = () => {
   const [products, setproducts] = useState([]);
   const [currPage, setCurrPage] = useState(1);
-
+  const [searchId, setSearchId] = useState(null);
+  const [error, setError] = useState();
+  const [searchParams, setSearchParams] = useSearchParams();
   const inputRef = useRef();
 
   useEffect(() => {
+    const pageParam = Number(searchParams.get("page"));
+    const searchIdParam = Number(searchParams.get("id"));
+
+    if (pageParam || searchIdParam) {
+      setCurrPage(pageParam);
+      setSearchId(searchIdParam);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
     requestItems();
-  }, [currPage]);
+  }, [currPage, searchId]);
 
   async function requestItems() {
     let res;
-    if (inputRef.current.value) {
-      if (inputRef.current.value > 0 && inputRef.current.value < 13) {
-        res = await fetch(
-          `https://reqres.in/api/products?id=${inputRef.current.value}`
-        );
-        const json = await res.json();
-        setproducts([json.data]);
+    if (searchId) {
+      if (searchId > 0 && searchId < 13) {
+        try {
+          res = await fetch(`https://reqres.in/api/products?id=${searchId}`);
+          const json = await res.json();
+          setproducts([json.data]);
+        } catch (error) {
+          setError(error);
+        }
       } else {
         setproducts([]);
       }
     } else {
-      res = await fetch(
-        `https://reqres.in/api/products?per_page=5&page=${currPage}`
-      );
-      const json = await res.json();
-      setproducts(json.data);
+      try {
+        res = await fetch(
+          `https://reqres.in/api/products?per_page=5&page=${currPage}`
+        );
+        const json = await res.json();
+        setproducts(json.data);
+      } catch (error) {
+        setError(error);
+      }
     }
   }
 
-  return (
-    <div className="List">
-      <form>
-        <label htmlFor="search">Search by ID</label>
-        <input
-          type="number"
-          ref={inputRef}
-          onChange={() => {
-            requestItems();
-          }}
-        />
-      </form>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>NAME</th>
-            <th>YEAR</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products.map((product, index) => {
-            return <Product product={product} key={index} />;
-          })}
-        </tbody>
-      </table>
-      <nav>
-        <button
-          onClick={() => {
-            if (currPage > 1 && !inputRef.current.value) {
-              setCurrPage(currPage - 1);
-            }
-          }}
-        >
-          Previous
-        </button>
-        <button
-          onClick={() => {
-            if (currPage < 3 && !inputRef.current.value) {
-              setCurrPage(currPage + 1);
-            }
-          }}
-        >
-          Next
-        </button>
-      </nav>
-    </div>
-  );
+  if (error) {
+    return (
+      <div className="error-msg">
+        <p>
+          An error has occured during loading the products. Please check your
+          internet connection and refresh the page.
+          <br /> Error: {error.message}
+        </p>
+      </div>
+    );
+  } else {
+    return (
+      <div className="List">
+        <form>
+          <label htmlFor="search">Search by ID</label>
+          <input
+            type="number"
+            ref={inputRef}
+            onChange={(e) => {
+              if (e.target.value) {
+                setSearchParams({ id: e.target.value });
+              } else setSearchParams({ page: 1 });
+            }}
+          />
+        </form>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>NAME</th>
+              <th>YEAR</th>
+            </tr>
+          </thead>
+          <tbody>
+            {products.map((product, index) => {
+              return <Product product={product} key={index} />;
+            })}
+          </tbody>
+        </table>
+        <nav>
+          <button
+            onClick={() => {
+              if (currPage > 1 && !searchId) {
+                setSearchParams({ page: currPage - 1 });
+              }
+            }}
+          >
+            Previous
+          </button>
+          <button
+            onClick={() => {
+              if (currPage < 3 && !searchId) {
+                setSearchParams({ page: currPage + 1 });
+              }
+            }}
+          >
+            Next
+          </button>
+        </nav>
+      </div>
+    );
+  }
 };
 
 export default List;

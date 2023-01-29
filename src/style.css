@@ -16,6 +16,10 @@ form {
   flex-direction: row;
   width: 60%;
   /* height: 50px; */
+  border: 2px solid darkgrey;
+  border-radius: 10px;
+  padding: 30px;
+  margin: 30px 0 10px 0;
 }
 
 input {
@@ -25,16 +29,25 @@ input {
 label {
 }
 
-table {
+.List table {
   width: 60%;
+  border-spacing: 0 5;
+  border: 2px solid darkgrey;
+  border-radius: 10px;
+  padding: 30px;
+  /* border-collapse: collapse; */
+  text-align: center;
 }
 
-thead {
+.List thead {
   font-size: 20px;
 }
 
-tr {
-  /* height: 50px; */
+.List tr {
+  height: 50px;
+}
+
+.List td {
 }
 
 #modal {
@@ -60,4 +73,16 @@ tr {
   padding: 20px;
   text-align: center;
   border-radius: 10px;
+}
+
+.details-table {
+  width: 60%;
+}
+
+.details-table thead {
+  font-size: 20px;
+}
+
+.details-table tr {
+  /* height: 50px; */
 }
