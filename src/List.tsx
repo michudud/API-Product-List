@@ -3,12 +3,22 @@ import { useSearchParams } from "react-router-dom";
 import Product from "./Product";
 
 const List = () => {
-  const [products, setproducts] = useState([]);
+  const [products, setproducts] = useState<
+    | {
+        id: number;
+        name: string;
+        year: number;
+        color: string;
+        pantone_value: string;
+      }[]
+    | []
+  >([]);
   const [currPage, setCurrPage] = useState(1);
-  const [searchId, setSearchId] = useState(null);
-  const [error, setError] = useState();
+  const [searchId, setSearchId] = useState<number | null>(null);
+  const [error, setError] = useState<any | null>();
   const [searchParams, setSearchParams] = useSearchParams();
-  const inputRef = useRef();
+  const inputRef: React.MutableRefObject<HTMLInputElement | null> =
+    useRef(null);
 
   useEffect(() => {
     const pageParam = Number(searchParams.get("page"));
@@ -64,7 +74,11 @@ const List = () => {
   } else {
     return (
       <div className="List">
-        <form>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+          }}
+        >
           <label htmlFor="search">Search by ID</label>
           <input
             type="number"
@@ -72,7 +86,7 @@ const List = () => {
             onChange={(e) => {
               if (e.target.value) {
                 setSearchParams({ id: e.target.value });
-              } else setSearchParams({ page: 1 });
+              } else setSearchParams({ page: "1" });
             }}
           />
         </form>
@@ -94,7 +108,7 @@ const List = () => {
           <button
             onClick={() => {
               if (currPage > 1 && !searchId) {
-                setSearchParams({ page: currPage - 1 });
+                setSearchParams({ page: (currPage - 1).toString() });
               }
             }}
           >
@@ -103,7 +117,7 @@ const List = () => {
           <button
             onClick={() => {
               if (currPage < 3 && !searchId) {
-                setSearchParams({ page: currPage + 1 });
+                setSearchParams({ page: (currPage + 1).toString() });
               }
             }}
           >

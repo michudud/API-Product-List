@@ -13,4 +13,7 @@ const App = () => {
   );
 };
 
-createRoot(document.getElementById("root")).render(<App />);
+const rootDiv = document.getElementById("root");
+if (rootDiv) {
+  createRoot(rootDiv).render(<App />);
+}
