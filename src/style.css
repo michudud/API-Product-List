@@ -2,52 +2,92 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 .List {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  width: 1000px;
+  margin: 0 auto;
 }
 
-form {
+.List form {
   display: flex;
   flex-direction: row;
-  width: 60%;
-  /* height: 50px; */
-  border: 2px solid darkgrey;
+  width: 100%;
+  height: 100px;
+  border: 1px solid #727272;
   border-radius: 10px;
   padding: 30px;
   margin: 30px 0 10px 0;
 }
 
-input {
-  width: 80%;
+.List form label {
+  width: 20%;
+  text-align: center;
+  font-size: 20px;
+  margin-top: 10px;
 }
 
-label {
+.List form input {
+  width: 80%;
+  margin: 0 auto;
+  border: 1px solid black;
+  border-radius: 10px;
+  font-size: 20px;
 }
 
 .List table {
-  width: 60%;
+  width: 100%;
   border-spacing: 0 5;
-  border: 2px solid darkgrey;
+  border: 1px solid #727272;
   border-radius: 10px;
   padding: 30px;
-  /* border-collapse: collapse; */
   text-align: center;
+  font-size: 18px;
 }
 
 .List thead {
   font-size: 20px;
+  background-color: lightgrey;
 }
 
 .List tr {
   height: 50px;
 }
 
-.List td {
+.List th,
+td {
+  border-bottom: 1px solid black;
+}
+
+.List th:first-child,
+td:first-child {
+  width: 200px;
+}
+
+.List th:last-child,
+td:last-child {
+  width: 200px;
+}
+
+.List nav {
+  border: 1px solid #727272;
+  border-radius: 10px;
+  padding: 30px;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.List nav button {
+  height: 40px;
+  width: 200px;
+  margin: 0 20px 0 20px;
+  font-size: 16px;
+  border: 1px solid black;
+  border-radius: 10px;
+  background-color: lightgrey;
 }
 
 #modal {
@@ -67,22 +107,46 @@ label {
   display: none;
 }
 
-#modal > div {
+#modal div {
   background-color: lightgrey;
-  max-width: 500px;
-  padding: 20px;
+  width: 400px;
+  padding: 30px;
   text-align: center;
   border-radius: 10px;
 }
 
-.details-table {
-  width: 60%;
+#modal button {
+  width: 100px;
+  height: 30px;
+  margin-top: 30px;
+  font-size: 18px;
+  border: 1px solid black;
+  border-radius: 10px;
 }
 
-.details-table thead {
-  font-size: 20px;
+.details-table {
+  width: 100%;
+  border-spacing: 0 5;
+  font-size: 18px;
 }
 
 .details-table tr {
-  /* height: 50px; */
+  height: 40px;
+}
+
+.details-table td,
+th {
+  padding: 20px;
+  border-bottom: 1px solid black;
+}
+
+.error-msg {
+  width: 80%;
+  margin: 0 auto;
+  text-align: center;
+  margin-top: 30px;
+  padding: 30px;
+  border: 1px solid red;
+  border-radius: 10px;
+  font-size: 18px;
 }

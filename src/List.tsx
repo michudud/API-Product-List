@@ -40,6 +40,10 @@ const List = () => {
       if (searchId > 0 && searchId < 13) {
         try {
           res = await fetch(`https://reqres.in/api/products?id=${searchId}`);
+          console.log(res.ok);
+          if (!res.ok) {
+            throw new Error(`${res.status}`);
+          }
           const json = await res.json();
           setproducts([json.data]);
         } catch (error) {
@@ -53,6 +57,9 @@ const List = () => {
         res = await fetch(
           `https://reqres.in/api/products?per_page=5&page=${currPage}`
         );
+        if (!res.ok) {
+          throw new Error(`${res.status}`);
+        }
         const json = await res.json();
         setproducts(json.data);
       } catch (error) {
@@ -65,8 +72,7 @@ const List = () => {
     return (
       <div className="error-msg">
         <p>
-          An error has occured during loading the products. Please check your
-          internet connection and refresh the page.
+          An error has occured during loading the products.
           <br /> Error: {error.message}
         </p>
       </div>
