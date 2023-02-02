@@ -150,3 +150,14 @@ th {
   border-radius: 10px;
   font-size: 18px;
 }
+
+.error-msg button {
+  height: 40px;
+  width: 200px;
+  margin: 0 20px 0 20px;
+  font-size: 16px;
+  border: 1px solid black;
+  border-radius: 10px;
+  background-color: lightgrey;
+  margin-top: 30px;
+}

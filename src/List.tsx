@@ -14,19 +14,74 @@ const List = () => {
     | []
   >([]);
   const [currPage, setCurrPage] = useState(1);
+  const [totalProducts, setTotalProducts] = useState<number>();
+  const [pageCount, setPageCount] = useState<number>();
   const [searchId, setSearchId] = useState<number | null>(null);
   const [error, setError] = useState<any | null>();
   const [searchParams, setSearchParams] = useSearchParams();
+  const isMounted = useRef(false);
+  const itemsPerPage: number = 5;
+
   const inputRef: React.MutableRefObject<HTMLInputElement | null> =
     useRef(null);
 
   useEffect(() => {
-    const pageParam = Number(searchParams.get("page"));
-    const searchIdParam = Number(searchParams.get("id"));
+    (async function requestTotalItems() {
+      try {
+        const res = await fetch(`https://reqres.in/api/products`);
+        if (!res.ok) {
+          throw new Error(`${res.status}`);
+        }
+        const json = await res.json();
 
-    if (pageParam || searchIdParam) {
-      setCurrPage(pageParam);
-      setSearchId(searchIdParam);
+        let totalProductsL = json.total;
+        let pageCountL = Math.ceil(totalProductsL / itemsPerPage);
+
+        setPageCount(pageCountL);
+        setTotalProducts(totalProductsL);
+
+        const pageParam = Number(searchParams.get("page"));
+        const searchIdParam = Number(searchParams.get("id"));
+
+        if (pageParam) {
+          if (pageParam > 0 && pageParam <= pageCountL) {
+            setCurrPage(pageParam);
+          } else {
+            throw new Error("Page not found");
+          }
+        } else if (searchIdParam) {
+          if (searchIdParam > 0 && searchIdParam <= totalProductsL) {
+            setSearchId(searchIdParam);
+          } else {
+            throw new Error("Id not found");
+          }
+        }
+      } catch (error) {
+        setError(error);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (isMounted.current) {
+      const pageParam = Number(searchParams.get("page"));
+      const searchIdParam = Number(searchParams.get("id"));
+
+      if (pageParam && pageCount) {
+        if (pageParam > 0 && pageParam <= pageCount) {
+          setCurrPage(pageParam);
+        } else {
+          setError(Error("Page not found"));
+        }
+      } else if (searchIdParam && totalProducts) {
+        if (searchIdParam > 0 && searchIdParam <= totalProducts) {
+          setSearchId(searchIdParam);
+        } else {
+          setError(Error("Id not found"));
+        }
+      }
+    } else {
+      isMounted.current = true;
     }
   }, [searchParams]);
 
@@ -36,11 +91,10 @@ const List = () => {
 
   async function requestItems() {
     let res;
-    if (searchId) {
-      if (searchId > 0 && searchId < 13) {
+    if (searchId && totalProducts) {
+      if (searchId > 0 && searchId <= totalProducts) {
         try {
           res = await fetch(`https://reqres.in/api/products?id=${searchId}`);
-          console.log(res.ok);
           if (!res.ok) {
             throw new Error(`${res.status}`);
           }
@@ -50,7 +104,7 @@ const List = () => {
           setError(error);
         }
       } else {
-        setproducts([]);
+        setError(Error("Id not found"));
       }
     } else {
       try {
@@ -74,6 +128,15 @@ const List = () => {
         <p>
           An error has occured during loading the products.
           <br /> Error: {error.message}
+          <br />
+          <button
+            onClick={() => {
+              setError(null);
+              setSearchParams({ page: "1" });
+            }}
+          >
+            Home Page
+          </button>
         </p>
       </div>
     );
@@ -90,9 +153,11 @@ const List = () => {
             type="number"
             ref={inputRef}
             onChange={(e) => {
-              if (e.target.value) {
+              if (e.target.value && e.target.value !== "") {
                 setSearchParams({ id: e.target.value });
-              } else setSearchParams({ page: "1" });
+              } else {
+                setSearchParams({ page: "1" });
+              }
             }}
           />
         </form>
@@ -122,7 +187,7 @@ const List = () => {
           </button>
           <button
             onClick={() => {
-              if (currPage < 3 && !searchId) {
+              if (pageCount && currPage < pageCount && !searchId) {
                 setSearchParams({ page: (currPage + 1).toString() });
               }
             }}
