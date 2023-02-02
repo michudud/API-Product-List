@@ -109,7 +109,7 @@ const List = () => {
     } else {
       try {
         res = await fetch(
-          `https://reqres.in/api/products?per_page=5&page=${currPage}`
+          `https://reqres.in/api/products?per_page=${itemsPerPage}&page=${currPage}`
         );
         if (!res.ok) {
           throw new Error(`${res.status}`);
