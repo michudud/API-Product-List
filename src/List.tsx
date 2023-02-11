@@ -34,28 +34,8 @@ const List = () => {
         }
         const json = await res.json();
 
-        let totalProductsL = json.total;
-        let pageCountL = Math.ceil(totalProductsL / itemsPerPage);
-
-        setPageCount(pageCountL);
-        setTotalProducts(totalProductsL);
-
-        const pageParam = Number(searchParams.get("page"));
-        const searchIdParam = Number(searchParams.get("id"));
-
-        if (pageParam) {
-          if (pageParam > 0 && pageParam <= pageCountL) {
-            setCurrPage(pageParam);
-          } else {
-            throw new Error("Page not found");
-          }
-        } else if (searchIdParam) {
-          if (searchIdParam > 0 && searchIdParam <= totalProductsL) {
-            setSearchId(searchIdParam);
-          } else {
-            throw new Error("Id not found");
-          }
-        }
+        setPageCount(Math.ceil(json.total / itemsPerPage));
+        setTotalProducts(json.total);
       } catch (error) {
         setError(error);
       }
@@ -67,7 +47,7 @@ const List = () => {
       const pageParam = Number(searchParams.get("page"));
       const searchIdParam = Number(searchParams.get("id"));
 
-      if (pageParam && pageCount) {
+      if (pageParam && pageCount && totalProducts) {
         if (pageParam > 0 && pageParam <= pageCount) {
           setCurrPage(pageParam);
         } else {
@@ -83,7 +63,7 @@ const List = () => {
     } else {
       isMounted.current = true;
     }
-  }, [searchParams]);
+  }, [searchParams, pageCount, totalProducts]);
 
   useEffect(() => {
     requestItems();
